@@ -1,0 +1,8 @@
+*.log
+*env*
+node_modules
+*.lock*
+*cljs-runtime*
+*target*
+.shadow-cljs
+resources/public/js/manifest*
