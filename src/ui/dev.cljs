@@ -1,21 +1,18 @@
 (ns ui.dev
   (:require
-   [reagent.core :as r]
+   ;;[reagent.core :as r]
+   [ui.views.userlist :refer [user-list]]
+   [reagent.dom :as rdom]
    [ui.views.searchbox :refer [search-box]]
-   [reagent.dom :as rdom]))
+   [ui.app :refer [app
+                   domroot
+                   update-user-data-on-scroll-end]]
+   [ui.db :refer [dev-app-state]]))
 
-(defonce value (r/atom "hi"))
-
-(defn on-value-change
-  [event]
-  (reset! value (-> event .-target .-value)))
 
 (defn initApp
   []
-  (rdom/render [:div
-                [:div "Hi I am a" [:h2 {:style {:color "red"}} "COMPONENT"]]
-                [search-box {:value value :onchange on-value-change}]]
-               (->
-                js/document
-                (.getElementById
-                 "root"))))
+  (rdom/render [:<>
+                [app dev-app-state]
+                [user-list {:state dev-app-state :on-scroll (update-user-data-on-scroll-end dev-app-state)}]]
+               domroot))

@@ -2,17 +2,23 @@
  :lein {:profile "+ui"}
  :jvm-opts ["Xmx1G"]
  :dev-http {8081 "resources/public"}
+ :nrepl {:port 9090}
  :builds {:prod
           {:target :browser
            :output-dir "resources/public/js"
            :asset-path "/js"
            :module-hash-names true
-           :compiler-options {:optimizations :whitespace
+           :compiler-options {:optimizations :advanced
                               :source-maps false
                               :output-feature-set :es6}
            :build-options {:mainfest-name "manifest.json"}
-           :dev-tools {:target :browser}
-           :nrepl {:port 9090
-                   :init-ns ui.dev}
-           :dev {:modules {:app {:init-fn ui.dev/initApp}}}
+           :devtools {:target :browser
+                      ;;:watch-dir "resources/public"
+                      :autoload true
+                      :after-load ui.app/reloadApp}
+           :dev {:compiler-options {:optimizations :white-space
+                                    :source-maps true
+                                    :output-feature-set :es6}
+                 :modules {:app {:init-fn ui.dev/initApp}}
+                 :devtools {:after-load ui.dev/initApp}}
            :modules {:app {:init-fn ui.app/initApp}}}}}

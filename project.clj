@@ -8,6 +8,8 @@
   :dependencies [[thheller/shadow-cljs "2.16.12"]]
   :auto-clean true
   ;;:main ^:skip-aot
+  :aliases {"cljs-repl" ["repl" ":connect" "localhost:9090"]}
+  :repl-options {:nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
   :profiles {:ui {;;:source-paths ["src/ui"]
                   :dependencies [[reagent "1.1.0"]
                                  [re-frame "1.3.0-rc2"]]}}
