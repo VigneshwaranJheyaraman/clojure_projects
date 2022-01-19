@@ -6,3 +6,5 @@ node_modules
 *target*
 .shadow-cljs
 resources/public/js/manifest*
+*history*
+*port*

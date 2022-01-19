@@ -5,11 +5,15 @@
   :clean-target [:target-path
                  (str :resource-paths "public/js")
                  ".shadow-cljs"]
-  :dependencies [[thheller/shadow-cljs "2.16.12"]]
+  :dependencies [[thheller/shadow-cljs "2.16.12"]
+                 [ring/ring-core "1.8.2"]
+                 [ring/ring-jetty-adapter "1.8.2"]
+                 [compojure "1.6.2"]]
   :auto-clean true
   ;;:main ^:skip-aot
   :aliases {"cljs-repl" ["repl" ":connect" "localhost:9090"]}
-  :repl-options {:nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
+  :repl-options {:init-ns api.main
+                 :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
   :profiles {:ui {;;:source-paths ["src/ui"]
                   :dependencies [[reagent "1.1.0"]
                                  [re-frame "1.3.0-rc2"]]}}
