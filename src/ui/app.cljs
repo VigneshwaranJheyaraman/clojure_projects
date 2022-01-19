@@ -29,8 +29,7 @@
   (fn
     [event]
     (let [value (-> event .-target .-value)
-          state (merge {} @app-state)
-          searchInput (state :searchInput)]
+          state (merge {} @app-state)]
       (reset! app-state (assoc state :searchInput value))
     ;;updating the state
       )))
