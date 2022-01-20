@@ -3,7 +3,7 @@
    ;;[reagent.core :as r]
    [ui.views.userlist :refer [user-list]]
    [reagent.dom :as rdom]
-   [ui.views.searchbox :refer [search-box]]
+   ;;[ui.views.searchbox :refer [search-box]]
    [ui.app :refer [app
                    domroot
                    update-user-data-on-scroll-end]]

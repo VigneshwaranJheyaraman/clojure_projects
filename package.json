@@ -10,7 +10,7 @@
     "shadow-cljs": "^2.16.12"
   },
   "scripts": {
-    "build": "yarn shadow-cljs compile prod",
+    "build": "yarn shadow-cljs release prod",
     "watch": "yarn shadow-cljs watch prod"
   },
   "dependencies": {

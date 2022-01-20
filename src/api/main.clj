@@ -1,35 +1,45 @@
 (ns api.main
-  (:require [ring.adapter.jetty :refer [run-jetty]]
-            [ring.middleware.params :refer [wrap-params]]
-            ;;[ring.middleware.reload :refer [wrap-reload]]
-            [api.middleware.content-response :refer [add-content-type]]))
-(defn route-handler
-  [request]
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body (str "<h1>" (request :query-params) "</h1>")})
+  (:require
+   [reitit.ring :as ring]
+   [reitit.swagger :as swagger]
+   [ring.adapter.jetty :refer [run-jetty]]
+   [api.routes :refer [user-routes]]
+   [reitit.coercion.spec]
+   [reitit.swagger-ui :as swagger-ui]
+   [reitit.ring.coercion :as coercion]
+   [reitit.ring.middleware.muuntaja :as muuntaja]
+   [reitit.ring.middleware.parameters :as parameters]
+   [muuntaja.core :as m]
+   [reitit.dev.pretty :as pretty]
+   [reitit.ring.middleware.exception :as exception]
+   [api.middleware.exception-handler :refer [json-exception-handler]]
+   [mount.core :as mount]))
 
-(def app (->
-          route-handler
-          (add-content-type "text/html")
-          (wrap-params)))
+(def api-handler
+  (ring/ring-handler
+   (ring/router
+    (conj [["/swagger.json"
+            {:name ::swagger.json
+             :get {:no-doc true
+                   :swagger {:info {:title "User API using clojure"
+                                    :description "Simple api"}}
+                   :handler (swagger/create-swagger-handler)}}]] user-routes)
+    {:exception pretty/exception
+     :data {:coercion reitit.coercion.spec/coercion
+            :muuntaja m/instance
 
-(defonce server-config {:port 8080
-                        :join? false})
+            :middleware [swagger/swagger-feature
+                         parameters/parameters-middleware
+                         muuntaja/format-negotiate-middleware
+                         (exception/create-exception-middleware
+                          {::exception/default (partial json-exception-handler "exception")})
+                         muuntaja/format-response-middleware
+                         muuntaja/format-request-middleware
+                         coercion/coerce-response-middleware
+                         coercion/coerce-request-middleware]}})
+   (ring/routes
+    (swagger-ui/create-swagger-ui-handler {:path "/swagger-ui"})
+    (ring/create-default-handler
+     {:not-found (constantly {:status 200 :body "Oops not found"})}))))
 
-(defn- start-server
-  ([]
-   (run-jetty app server-config))
-  ([port]
-   (run-jetty app (assoc server-config :port port))))
-
-
-(defn server
-  ([]
-   (let [s (start-server)]
-     {:s s
-      :stop (fn [] (.stop s))
-      :restart (fn [] (when (nil? (.stop s)) (server)))}))
-  ([port]
-   (let [server (start-server port)] {:stop (fn [] (.stop server))
-                                      :restart (fn [] (.stop server) (server port))})))
+(def server (run-jetty api-handler {:port 8080 :join? false}))
