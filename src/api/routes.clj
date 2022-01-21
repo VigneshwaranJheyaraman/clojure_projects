@@ -3,7 +3,7 @@
    [api.middleware.check-user-valid :refer [check-if-user-is-valid]]
    [ring.middleware.params :refer [wrap-params]]
    [clojure.spec.alpha :as s]
-   [api.views :refer [login-user, signup-user]]))
+   [api.views :refer [login-user, signup-user, logout-user, return-user-profile]]))
 
 (defn map-route-context
   ([context endpoint]
@@ -28,10 +28,15 @@
                                          wrap-params]
                             :parameters {:path {:userid string?}
                                          :query (s/keys :opt-un [::user_agent])}
-                            :handler (fn [r] {:status 200 :body (-> r :parameters :query)})}}]
+                            :handler (fn [r] (return-user-profile (-> r :parameters :path)))}}]
                     [(map-route-context "signup")
                      {:name ::user.signup
                       :summary "Adds a new user to the DB"
                       :post {:parameters {:body {:name string?
                                                  :pwd string?}}
-                             :handler #(signup-user (-> % :parameters :body))}}]]))
+                             :handler #(signup-user (-> % :parameters :body))}}]
+                    [(map-route-context "logout")
+                     {:name ::user.logout
+                      :summary "Logging out user"
+                      :post {:parameters {:body {:name string?}}
+                             :handler #(logout-user (-> % :parameters :body))}}]]))

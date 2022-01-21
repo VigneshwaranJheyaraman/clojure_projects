@@ -12,8 +12,7 @@
    [muuntaja.core :as m]
    [reitit.dev.pretty :as pretty]
    [reitit.ring.middleware.exception :as exception]
-   [api.middleware.exception-handler :refer [json-exception-handler]]
-   [mount.core :as mount]))
+   [api.middleware.exception-handler :refer [json-exception-handler]]))
 
 (def api-handler
   (ring/ring-handler
