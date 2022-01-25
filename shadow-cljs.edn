@@ -2,7 +2,8 @@
  :lein {:profile "+ui"}
  :jvm-opts ["Xmx1G"]
  :dev-http {8081 "resources/public"}
- :nrepl {:port 9090}
+ :nrepl {:port 9090
+         :init-fn (fn [] (shadow/repl :prod))}
  :builds {:prod
           {:target :browser
            :output-dir "resources/public/js"

@@ -16,5 +16,5 @@
                        :width "100%"}
                :onChange onchange
                :variant "outlined"
-               :placeholder (when (not= empty? placeholder) placeholder :else nil)
+               :placeholder (when (not= empty? placeholder) placeholder)
                :label label}])
